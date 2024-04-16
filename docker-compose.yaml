@@ -1,0 +1,39 @@
+version: '3.6'
+
+services:
+  web:
+    container_name: fpd-nginx
+    hostname: fpd-nginx.lo
+    image: nginx:latest
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www
+    ports:
+      - "80:80"
+    depends_on:
+      - app
+  app:
+    container_name: fpd-fpm
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/var/www
+    networks:
+      default:
+        aliases:
+          - fpm
+    depends_on:
+      - db
+  db:
+    container_name: fpd-mysql
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: database
+    ports:
+      - "3306:3306"
+    networks:
+      default:
+        aliases:
+          - fpd-mysql
