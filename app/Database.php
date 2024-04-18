@@ -10,6 +10,7 @@ class Database implements DatabaseInterface
     public final const PLACEHOLDER_PATTERN = '/\?d|\?f|\?a|\?#|\?\s/';
     public final const SKIP_PATTERN = '/\{.*SKIP.*\}/';
     public final const CURLY_PATTERN = '/\{|\}/';
+    public final const SKIP = 'SKIP';
 
     public function __construct(private readonly mysqli $mysqli, private readonly FormatterFactory $formatterFactory){}
 
@@ -29,6 +30,10 @@ class Database implements DatabaseInterface
         $newQuery = '';
         foreach ($sqlParts as $idx => $part) {
             if (isset($markerList[$idx]) && $args[$idx]) {
+                if ($args[$idx] === self::SKIP) {
+                    $newQuery .= $part . $args[$idx];
+                    continue;
+                }
                 $newQuery .= $part . $this->formatterFactory->getFormatterByMarker($markerList[$idx])->format($args[$idx]);
             } else {
                 $newQuery .= $part;
@@ -43,6 +48,6 @@ class Database implements DatabaseInterface
 
     public function skip()
     {
-        return DefaultFormatter::SKIP;
+        return self::SKIP;
     }
 }

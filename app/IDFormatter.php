@@ -5,10 +5,6 @@ class IDFormatter implements FormatterInterface
 {
     public function format($value): string
     {
-        if ($value === DefaultFormatter::SKIP) {
-            return DefaultFormatter::SKIP;
-        }
-
         if (!is_array($value)) {
             $value = [$value];
         }
