@@ -5,6 +5,10 @@ class ArrayFormatter extends DefaultFormatter
 {
     public function format($value): string
     {
+        if ($value === DefaultFormatter::SKIP) {
+            return DefaultFormatter::SKIP;
+        }
+
         if (!is_array($value)) {
             throw new \RuntimeException('Incorrect type value[' . gettype($value) . '], should be array');
         }

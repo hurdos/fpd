@@ -3,9 +3,11 @@
 namespace FpDbTest;
 class DefaultFormatter implements FormatterInterface
 {
+    public final const SKIP = 'SKIP';
     public function format($value): string
     {
         return match (true) {
+            $value === self::SKIP => self::SKIP,
             is_string($value) => $this->escapeString($value),
             is_int($value), is_float($value) => (string)$value,
             is_bool($value) => $value ? '1' : '0',

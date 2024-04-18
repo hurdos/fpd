@@ -8,6 +8,8 @@ use mysqli;
 class Database implements DatabaseInterface
 {
     public final const PLACEHOLDER_PATTERN = '/\?d|\?f|\?a|\?#|\?\s/';
+    public final const SKIP_PATTERN = '/\{.*SKIP.*\}/';
+    public final const CURLY_PATTERN = '/\{|\}/';
 
     public function __construct(private readonly mysqli $mysqli, private readonly FormatterFactory $formatterFactory){}
 
@@ -32,11 +34,15 @@ class Database implements DatabaseInterface
                 $newQuery .= $part;
             }
         }
-        return $newQuery;
+
+        // Remove SKIP if exists
+        $newQuery = preg_replace(self::SKIP_PATTERN, '', $newQuery);
+        // Remove { and } if exists
+        return preg_replace(self::CURLY_PATTERN, '', $newQuery);
     }
 
     public function skip()
     {
-        return true;
+        return DefaultFormatter::SKIP;
     }
 }
