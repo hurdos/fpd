@@ -2,6 +2,7 @@
 
 use FpDbTest\Database;
 use FpDbTest\DatabaseTest;
+use FpDbTest\FormatterFactory;
 
 spl_autoload_register(function ($class) {
     $a = array_slice(explode('\\', $class), 1);
@@ -17,7 +18,7 @@ if ($mysqli->connect_errno) {
     throw new \RuntimeException($mysqli->connect_error);
 }
 
-$db = new Database($mysqli);
+$db = new Database($mysqli, new FormatterFactory());
 $test = new DatabaseTest($db);
 $test->testBuildQuery();
 
